@@ -1,0 +1,48 @@
+{
+  "name": "fproject-lvl2",
+  "version": "0.1.0",
+  "description": "frontend-project-lvl2",
+  "main": "dist/index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "cross-env NODE_ENV=production babel src --out-dir dist --source-maps inline",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/BrenotBt/frontend-project-lvl2.git"
+  },
+  "author": "Tolstenko Alexander",
+  "license": "ISC",
+  "keywords": [
+    "frontend-project-lvl2"
+  ],
+  "bugs": {
+    "url": "https://github.com/BrenotBt/frontend-project-lvl2/issues"
+  },
+  "homepage": "https://github.com/BrenotBt/frontend-project-lvl2#readme",
+  "bin": {
+    "gendiff": "dist/bin/gendiff.js"
+  },
+  "dependencies": {
+    "@hexlet/pairs": "^1.0.10",
+    "make": "^0.8.1",
+    "readline-sync": "^1.4.10",
+    "commander": "^4.1.1"
+  },
+  "devDependencies": {
+    "@babel/cli": "^7.7.4",
+    "@babel/core": "^7.7.4",
+    "@babel/node": "^7.7.4",
+    "@babel/preset-env": "^7.7.4",
+    "babel-eslint": "^10.0.2",
+    "cross-env": "^6.0.3",
+    "eslint": "^6.3.0",
+    "eslint-config-airbnb-base": "^14.0.0",
+    "eslint-plugin-import": "^2.18.2",
+    "eslint-plugin-babel": "^5.3.0"
+  },
+  "files": [
+    "dist"
+  ]
+}
