@@ -1,5 +1,5 @@
 #! /usr/bin/env node
 
-import exec from '../info';
+import exec from '../program';
 
 exec();

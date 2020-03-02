@@ -2,14 +2,19 @@
 ---
 plugins:
   - babel
+  - jest
+  - lodash
 
 env:
   node: true
+  jest: true
 
 parser: babel-eslint
 
 extends:
   - 'airbnb-base'
+  - 'plugin:jest/recommended'
+  - 'plugin:lodash/canonical'
 
 rules:
   no-console: 0
