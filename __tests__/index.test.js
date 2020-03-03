@@ -3,7 +3,7 @@ import _ from 'lodash';
 import path from 'path';
 import genDiff from '../src';
 
-const workFormats = ['json', 'yml'];
+const workFormats = ['json', 'yml', 'ini'];
 
 const getFiles = (formats) => _.map(formats, (item) => [
   item,
