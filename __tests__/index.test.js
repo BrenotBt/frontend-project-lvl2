@@ -1,12 +1,24 @@
 import fs from 'fs';
+import _ from 'lodash';
 import path from 'path';
 import genDiff from '../src';
 
-const filepath1 = path.resolve(__dirname, '__fixtures__/before.json');
-const filepath2 = path.resolve(__dirname, '__fixtures__/after.json');
-const filepath3 = path.resolve(__dirname, '__fixtures__/before-after-diff.txt');
-const result = fs.readFileSync(filepath3, 'utf8');
+const workFormats = ['json', 'yml'];
 
-test('gendiff', () => {
-  expect(genDiff(filepath1, filepath2)).toBe(result);
-});
+const getFiles = (formats) => _.map(formats, (item) => [
+  item,
+  path.resolve(__dirname, `__fixtures__/before.${item}`),
+  path.resolve(__dirname, `__fixtures__/after.${item}`),
+]);
+
+const getResult = (format) => {
+  const resultPath = path.resolve(__dirname, `__fixtures__/${format}-result.txt`);
+  return fs.readFileSync(resultPath, 'utf8');
+};
+
+test.each(getFiles(workFormats))(
+  'genDiff',
+  (format, beforePath, afterPath) => {
+    expect(genDiff(beforePath, afterPath)).toBe(getResult(format));
+  },
+);

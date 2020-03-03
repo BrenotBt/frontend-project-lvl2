@@ -2,15 +2,16 @@
 import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
+import parser from './parsers';
 
 const getData = (item) => {
   let filepath = path.resolve(item);
   if (!fs.existsSync(filepath)) {
     filepath = path.join(process.cwd(), '__tests__', '__fixtures__', item);
   }
-  const json = fs.readFileSync(filepath, 'utf8');
-
-  return JSON.parse(json);
+  const type = path.extname(item).slice(1);
+  const data = fs.readFileSync(filepath, 'utf8');
+  return parser(data, type);
 };
 
 export default (firstConfig, secondConfig) => {
