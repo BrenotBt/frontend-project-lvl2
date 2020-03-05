@@ -62,7 +62,7 @@ const build = (object1, object2) => {
   return result;
 };
 
-export default (firstConfig, secondConfig, formatValue = 'json') => {
+export default (firstConfig, secondConfig, formatValue = 'unstructured') => {
   const object1 = getData(firstConfig);
   const object2 = getData(secondConfig);
 
