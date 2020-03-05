@@ -5,19 +5,24 @@ const getValue = (value) => (_.isObject(value) ? '[complex value]' : value);
 
 const format = (ast, parentKey = '') => _.map(ast, (node) => {
   const currentKey = parentKey !== '' ? `${parentKey}.${node.key}` : node.key;
-
+  let result = null;
   switch (node.type) {
     case types.unchanged:
-      return null;
+      result = null;
+      break;
     case types.deleted:
-      return `Property '${currentKey}' was ${node.type}`;
+      result = `Property '${currentKey}' was ${node.type}`;
+      break;
     case types.added:
-      return `Property '${currentKey}' was ${node.type} with value: ${getValue(node.value)}`;
+      result = `Property '${currentKey}' was ${node.type} with value: ${getValue(node.value)}`;
+      break;
     case types.changed:
-      return `Property '${currentKey}' was ${node.type}. From ${getValue(node.oldValue)} to ${getValue(node.newValue)}`;
+      result = `Property '${currentKey}' was ${node.type}. From ${getValue(node.oldValue)} to ${getValue(node.newValue)}`;
+      break;
     default:
-      return _.flatten(format(node.children, `${parentKey !== '' ? `${parentKey}.` : ''}${node.key}`));
+      result = _.flatten(format(node.children, `${parentKey !== '' ? `${parentKey}.` : ''}${node.key}`));
   }
+  return result;
 });
 
 export default (data) => {
