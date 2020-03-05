@@ -21,45 +21,29 @@ const build = (object1, object2) => {
   const keys2 = _.keys(object2);
   const keys = _.union(keys1, keys2);
 
-  const result = _.map(keys, (key) => {
+  return _.map(keys, (key) => {
     const value1 = object1[key];
     const value2 = object2[key];
 
     if (!_.has(object1, key)) {
       return { key, value: value2, type: types.added };
     }
-
     if (!_.has(object2, key)) {
       return { key, value: value1, type: types.deleted };
     }
-
     if (value1 === value2) {
       return { key, value: value1, type: types.unchanged };
     }
-
-    if (value1 !== value2) {
-      if (_.isObject(value1) && _.isObject(value2)) {
-        return {
-          key,
-          oldValue: value1,
-          newValue: value2,
-          type: types.nested,
-          children: build(value1, value2),
-        };
-      }
-
+    if (_.isObject(value1) && _.isObject(value2)) {
+      const child = build(value1, value2);
       return {
-        key,
-        oldValue: value1,
-        newValue: value2,
-        type: types.changed,
+        key, oldValue: value1, newValue: value2, type: types.nested, children: child,
       };
     }
-
-    return null;
+    return {
+      key, oldValue: value1, newValue: value2, type: types.changed,
+    };
   });
-
-  return result;
 };
 
 export default (firstConfig, secondConfig, formatValue = 'unstructured') => {
