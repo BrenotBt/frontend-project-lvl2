@@ -9,9 +9,8 @@ export default () => {
     .option('-f, --format [type]', 'Output format')
     .arguments('<firstConfig> <secondConfig>')
     .action((firstConfig, secondConfig) => {
-      const result = genDiff(firstConfig, secondConfig);
+      const result = genDiff(firstConfig, secondConfig, commander.format);
       console.log(result);
-    });
-
-  commander.parse(process.argv);
+    })
+    .parse(process.argv);
 };

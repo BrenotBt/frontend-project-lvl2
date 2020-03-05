@@ -62,10 +62,10 @@ const build = (object1, object2) => {
   return result;
 };
 
-export default (firstConfig, secondConfig) => {
+export default (firstConfig, secondConfig, formatValue = 'json') => {
   const object1 = getData(firstConfig);
   const object2 = getData(secondConfig);
 
   const result = build(object1, object2);
-  return format(result);
+  return format(result, formatValue);
 };
