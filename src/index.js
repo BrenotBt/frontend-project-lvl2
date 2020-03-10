@@ -2,17 +2,14 @@
 import fs from 'fs';
 import path from 'path';
 import _ from 'lodash';
-import parser from './parsers';
+import parser from './parser';
 import format from './formatters';
 import types from './types';
 
-const getData = (item) => {
-  let filepath = path.resolve(item);
-  if (!fs.existsSync(filepath)) {
-    filepath = path.join(process.cwd(), '__tests__', '__fixtures__', item);
-  }
-  const type = path.extname(item).slice(1);
-  const data = fs.readFileSync(filepath, 'utf8');
+const getData = (filePath) => {
+  const fullFilePath = path.resolve(filePath);
+  const type = path.extname(fullFilePath).slice(1);
+  const data = fs.readFileSync(fullFilePath, 'utf8');
   return parser(data, type);
 };
 
@@ -35,9 +32,9 @@ const build = (object1, object2) => {
       return { key, value: value1, type: types.unchanged };
     }
     if (_.isObject(value1) && _.isObject(value2)) {
-      const child = build(value1, value2);
+      const children = build(value1, value2);
       return {
-        key, oldValue: value1, newValue: value2, type: types.nested, children: child,
+        key, oldValue: value1, newValue: value2, type: types.nested, children,
       };
     }
     return {
