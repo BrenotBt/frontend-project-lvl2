@@ -19,26 +19,26 @@ const build = (object1, object2) => {
   const keys = _.union(keys1, keys2);
 
   return _.map(keys, (key) => {
-    const value1 = object1[key];
-    const value2 = object2[key];
+    const oldValue = object1[key];
+    const newValue = object2[key];
 
     if (!_.has(object1, key)) {
-      return { key, value: value2, type: types.added };
+      return { key, value: newValue, type: types.added };
     }
     if (!_.has(object2, key)) {
-      return { key, value: value1, type: types.deleted };
+      return { key, value: oldValue, type: types.deleted };
     }
-    if (value1 === value2) {
-      return { key, value: value1, type: types.unchanged };
+    if (oldValue === newValue) {
+      return { key, value: oldValue, type: types.unchanged };
     }
-    if (_.isObject(value1) && _.isObject(value2)) {
-      const children = build(value1, value2);
+    if (_.isObject(oldValue) && _.isObject(newValue)) {
+      const children = build(oldValue, newValue);
       return {
-        key, oldValue: value1, newValue: value2, type: types.nested, children,
+        key, oldValue, newValue, type: types.nested, children,
       };
     }
     return {
-      key, oldValue: value1, newValue: value2, type: types.changed,
+      key, oldValue, newValue, type: types.changed,
     };
   });
 };
