@@ -1,6 +1,4 @@
-import {
-  keys, isObject, flatten, repeat,
-} from 'lodash';
+import _ from 'lodash';
 
 const signs = {
   added: '+',
@@ -11,28 +9,28 @@ const signs = {
 
 const stringify = (object, level) => {
   const baseOffset = '    ';
-  const result = keys(object)
-    .map((key) => {
-      const value = object[key];
-      return `${repeat(baseOffset, level + 1)}${key}: ${value}`;
-    });
-  return `{\n${result.join('')}\n${repeat(baseOffset, level)}}`;
+  const keys = _.keys(object);
+  const result = _.map(keys, (key) => {
+    const value = object[key];
+    return `${_.repeat(baseOffset, level + 1)}${key}: ${value}`;
+  });
+  return `{\n${result.join('')}\n${_.repeat(baseOffset, level)}}`;
 };
 
-const getValue = (node, level) => (isObject(node.value)
+const getValue = (node, level) => (_.isObject(node.value)
   ? stringify(node.value, level + 1)
   : node.value
 );
 
 const format = (data, level = 0) => {
   const baseOffset = '  ';
-  const offset = baseOffset + repeat(baseOffset, level * 2);
+  const offset = baseOffset + _.repeat(baseOffset, level * 2);
 
-  return data.map((node) => {
+  return _.map(data, (node) => {
     const lines = {
       deleted: () => [`${offset}${signs[node.type]} ${node.key}: ${getValue(node, level)}`],
       added: () => [`${offset}${signs[node.type]} ${node.key}: ${getValue(node, level)}`],
-      changed: () => flatten(format([{
+      changed: () => _.flatten(format([{
         type: 'deleted',
         key: node.key,
         value: node.oldValue,
@@ -41,7 +39,7 @@ const format = (data, level = 0) => {
         key: node.key,
         value: node.newValue,
       }], level)),
-      nested: () => flatten([
+      nested: () => _.flatten([
         `${offset}${signs[node.type]} ${node.key}: {`,
         ...format(node.children, level + 1),
         `${offset}  }`,
@@ -54,6 +52,6 @@ const format = (data, level = 0) => {
 };
 
 export default (data) => {
-  const lines = flatten(format(data));
+  const lines = _.flatten(format(data));
   return `\n{\n${lines.join('\n')}\n}`;
 };
