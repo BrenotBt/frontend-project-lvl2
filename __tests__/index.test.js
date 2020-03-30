@@ -4,7 +4,7 @@ import path from 'path';
 import genDiff from '../src';
 
 const workFormats = ['json', 'yml', 'ini'];
-const resultFormats = ['json', 'plain', 'unstructured'];
+const resultFormats = ['json', 'plain', 'pretty'];
 const fixtures = path.resolve(__dirname, '__fixtures__');
 
 const getFiles = (formats) => _.map(formats, (item) => [
