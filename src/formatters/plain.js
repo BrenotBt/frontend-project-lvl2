@@ -2,21 +2,21 @@ import _ from 'lodash';
 
 const getValue = (value) => (_.isObject(value) ? '[complex value]' : value);
 
-const format = (ast, parentKey = '') => _.map(ast, (node) => {
-  const defaultValue = '';
-  const currentKey = parentKey !== '' ? `${parentKey}.${node.key}` : node.key;
-  const lines = {
-    deleted: () => `Property '${currentKey}' was ${node.type}`,
-    added: () => `Property '${currentKey}' was ${node.type} with value: ${getValue(node.value)}`,
-    changed: () => `Property '${currentKey}' was ${node.type}. From ${getValue(node.oldValue)} to ${getValue(node.newValue)}`,
-    nested: () => _.flatten(format(node.children, `${parentKey !== '' ? `${parentKey}.` : ''}${node.key}`)),
-    unchanged: () => defaultValue,
-  };
-
-  return lines[node.type]();
-});
+const lines = {
+  unchanged: () => null,
+  changed: (line, currentKey) => `Property '${currentKey}' was ${line.type}. From ${getValue(line.oldValue)} to ${getValue(line.newValue)}`,
+  added: (line, currentKey) => `Property '${currentKey}' was ${line.type} with value: ${getValue(line.value)}`,
+  deleted: (line, currentKey) => `Property '${currentKey}' was ${line.type}`,
+  nested: (line, currentKey, fn) => fn(line.children, `${currentKey}`),
+};
 
 export default (data) => {
-  const formatedData = _.flattenDeep(format(data));
-  return _.filter(formatedData, (node) => node !== '').join('\n');
+  const iter = (item, key = '') => {
+    const result = item.map((line) => {
+      const currentKey = key === '' ? line.key : `${key}.${line.key}`;
+      return lines[line.type](line, currentKey, iter);
+    });
+    return `${result.filter((str) => str !== null).join('\n')}`;
+  };
+  return iter(data);
 };

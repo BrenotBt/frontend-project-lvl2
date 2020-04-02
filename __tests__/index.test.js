@@ -1,5 +1,4 @@
 import fs from 'fs';
-import _ from 'lodash';
 import path from 'path';
 import genDiff from '../src';
 
@@ -7,7 +6,7 @@ const workFormats = ['json', 'yml', 'ini'];
 const resultFormats = ['json', 'plain', 'pretty'];
 const fixtures = path.resolve(__dirname, '__fixtures__');
 
-const getFiles = (formats) => _.map(formats, (item) => [
+const getFilepath = (formats) => formats.map((item) => [
   path.resolve(fixtures, `before.${item}`),
   path.resolve(fixtures, `after.${item}`),
 ]);
@@ -18,8 +17,8 @@ const getResult = (format) => {
 };
 
 
-_.forEach(resultFormats, (format) => {
-  test.each(getFiles(workFormats))(
+resultFormats.forEach((format) => {
+  test.each(getFilepath(workFormats))(
     `genDiff: ${format}, %s`,
     (beforePath, afterPath) => {
       expect(genDiff(beforePath, afterPath, format)).toEqual(getResult(format));

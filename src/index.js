@@ -18,7 +18,7 @@ const build = (object1, object2) => {
   const keys2 = _.keys(object2);
   const unionKeys = _.union(keys1, keys2);
 
-  return _.map(unionKeys, (key) => {
+  return unionKeys.map((key) => {
     const oldValue = object1[key];
     const newValue = object2[key];
 

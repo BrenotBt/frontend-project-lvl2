@@ -1,57 +1,30 @@
 import _ from 'lodash';
 
-const signs = {
-  added: '+',
-  deleted: '-',
-  unchanged: ' ',
-  nested: ' ',
+const baseOffset = '    ';
+
+const stringify = (item, level = 0) => {
+  if (!_.isObject(item)) {
+    return item;
+  }
+  const result = _.toPairs(item)
+    .map(([key, value]) => (
+      `${baseOffset.repeat(level + 1)}${key}: ${stringify(value, level + 1)}`
+    ));
+  return `{\n${result.join('\n')}\n${baseOffset.repeat(level)}}`;
 };
 
-const stringify = (object, level) => {
-  const baseOffset = '    ';
-  const keys = _.keys(object);
-  const result = _.map(keys, (key) => {
-    const value = object[key];
-    return `${_.repeat(baseOffset, level + 1)}${key}: ${value}`;
-  });
-  return `{\n${result.join('')}\n${_.repeat(baseOffset, level)}}`;
-};
-
-const getValue = (node, level) => (_.isObject(node.value)
-  ? stringify(node.value, level + 1)
-  : node.value
-);
-
-const format = (data, level = 0) => {
-  const baseOffset = '  ';
-  const offset = baseOffset + _.repeat(baseOffset, level * 2);
-
-  return _.map(data, (node) => {
-    const lines = {
-      deleted: () => [`${offset}${signs[node.type]} ${node.key}: ${getValue(node, level)}`],
-      added: () => [`${offset}${signs[node.type]} ${node.key}: ${getValue(node, level)}`],
-      changed: () => _.flatten(format([{
-        type: 'deleted',
-        key: node.key,
-        value: node.oldValue,
-      }, {
-        type: 'added',
-        key: node.key,
-        value: node.newValue,
-      }], level)),
-      nested: () => _.flatten([
-        `${offset}${signs[node.type]} ${node.key}: {`,
-        ...format(node.children, level + 1),
-        `${offset}  }`,
-      ]),
-      unchanged: () => [`${offset}${signs[node.type]} ${node.key}: ${getValue(node, level)}`],
-    };
-
-    return lines[node.type]();
-  });
+const lines = {
+  unchanged: (line, level) => `${baseOffset.repeat(level)}${line.key}: ${stringify(line.value, level)}`,
+  changed: (line, level) => `${baseOffset.repeat(level).slice(2)}- ${line.key}: ${stringify(line.oldValue, level)}\n${baseOffset.repeat(level).slice(2)}+ ${line.key}: ${stringify(line.newValue, level)}`,
+  added: (line, level) => `${baseOffset.repeat(level).slice(2)}+ ${line.key}: ${stringify(line.value, level)}`,
+  deleted: (line, level) => `${baseOffset.repeat(level).slice(2)}- ${line.key}: ${stringify(line.value, level)}`,
+  nested: (line, level, fn) => `${baseOffset.repeat(level)}${line.key}: ${fn(line.children, level)}`,
 };
 
 export default (data) => {
-  const lines = _.flatten(format(data));
-  return `\n{\n${lines.join('\n')}\n}`;
+  const iter = (item, level = 0) => {
+    const result = item.map((line) => lines[line.type](line, level + 1, iter));
+    return `{\n${result.join('\n')}\n${baseOffset.repeat(level)}}`;
+  };
+  return iter(data);
 };
