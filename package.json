@@ -33,7 +33,7 @@
     "readline-sync": "^1.4.10",
     "commander": "^4.1.1",
     "lodash": "^4.17.15",
-    "ini": "^1.3.5",
+    "ini": "^1.3.6",
     "js-yaml": "^3.13.1"
   },
   "devDependencies": {
